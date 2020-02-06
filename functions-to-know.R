@@ -137,8 +137,18 @@ vect[c("foo", "bar")]
 
 ## Matrices and Data Frames  ==================================================
 
+my_vector <-  1:20
+dim(my_vector)
+length(my_vector)
+dim(my_vector) <- c(4,5)
+dim(my_vector)
+attributes(my_vector)
+class(my_vector)
+my_data <- data.frame(patients, my_matrix)
+cnames <- c("patient", "age", "weight", "bp", "rating", "test")
+colnames(my_data) <- cnames
 
-
+good <- complete.cases()
 
 
 
