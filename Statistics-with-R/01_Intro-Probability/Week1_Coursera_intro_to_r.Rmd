@@ -59,7 +59,7 @@ Next, you need to load the packages in your working environment. We do this with
 the `library` function. Note that you only need to **install** packages once, but
 you need to **load** them each time you relaunch RStudio.
 
-```{r load-packages, message = FALSE}
+```{r load-packages, message=FALSE}
 library(dplyr)
 library(ggplot2)
 library(statsr)
@@ -158,6 +158,12 @@ names(arbuthnot)
 variable in the Data Viewer to answer this question.
 </div>
 
+```{r}
+# or use the range command
+range(arbuthnot[,"year"])
+range(arbuthnot$year)
+```
+
 You should see that the data frame contains the columns `year`,  `boys`, and 
 `girls`. At this point, you might notice that many of the commands in R look a 
 lot like functions from math class; that is, invoking R commands means supplying
@@ -207,7 +213,7 @@ variable that comes after me".
 
 ```{r extract-counts-of-girls-born}
 # type your code for the Question 2 here, and Knit
-
+arbuthnot$girls
 ```
 
 Notice that the way R has printed these data is different. When we looked at the
@@ -237,13 +243,15 @@ data.
 <li> There is an initial increase in the number of girls baptised but this number appears to level around 1680 and not change after that time point. </li>
 </ol>
 
+# #2
+
 Back to the code... We use the `ggplot()` function to build plots. If you run the 
 plotting code in your console, you should see the plot appear under the *Plots* tab 
 of the lower right panel of RStudio. Notice that the command above again looks like 
 a function, this time with arguments separated by commas. 
 
 - The first argument is always the dataset. 
-- Next, we provide thevariables from the dataset to be assigned to `aes`thetic 
+- Next, we provide the variables from the dataset to be assigned to `aes`thetic 
 elements of the plot, e.g. the x and the y axes. 
 - Finally, we use another layer, separated by a `+` to specify the `geom`etric 
 object for the plot. Since we want to scatterplot, we use `geom_point`.
@@ -353,6 +361,16 @@ do you see?
 ```{r plot-proportion-of-boys-over-time}
 # type your code for the Exercise here, and Knit
 
+#add proportion of boys and girls to dataframe
+arbuthnot <- arbuthnot %>%
+mutate(propor_boys = boys / total)
+
+arbuthnot <- arbuthnot %>%
+mutate(propor_girls = girls / total)
+
+# plot
+ggplot(data = arbuthnot, aes(x = year, y = propor_boys)) +
+  geom_line()
 ```
 
 Finally, in addition to simple mathematical operators like subtraction and 
@@ -401,7 +419,7 @@ your workspace.
 
 ```{r variables-in-present}
 # type your code for Question 4 here, and Knit
-
+dim(present)
 ```
 
 <div id="exercise">
@@ -411,7 +429,7 @@ function and `present$year` as its argument.
 
 ```{r years-in-present-data}
 # type your code for Exercise here, and Knit
-
+range(present$year)
 ```
 
 5. Calculate the total number of births for each year and store these values in a new 
@@ -427,7 +445,16 @@ decreased over time.
 
 ```{r prop-boys-over-time}
 # type your code for Question 5 here, and Knit
+present <- present %>%
+  mutate(total = boys + girls)
 
+present <- present %>% mutate(
+  prop_boys = boys / total,
+  prop_girls = girls / total
+)
+
+ggplot(data = present, aes(x = year, y = prop_boys)) +
+  geom_line()
 ```
 
 
@@ -442,7 +469,11 @@ variable which of the following statements is true?
 
 ```{r more-boys-per-year}
 # type your code for Question 6 here, and Knit
+present <- present %>% mutate(
+  more_boys = boys > girls
+)
 
+# every year there are more boys than girls
 ```
 
 
@@ -457,7 +488,12 @@ variable which of the following statements is true?
 
 ```{r prop-boy-girl-over-time}
 # type your code for Question 7 here, and Knit
+present <- present %>% mutate(
+  prop_boy_girl = boys / girls
+)
 
+ggplot(data = present, aes(x = year, y = prop_boy_girl)) +
+  geom_line()
 ```
 
 8. In what year did we see the most total number of births in the U.S.? *Hint:* Sort 
