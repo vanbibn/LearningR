@@ -151,5 +151,15 @@ colnames(my_data) <- cnames
 good <- complete.cases()
 
 
+## Dates and Times  ===========================================================
+ # dates use the Date class
+ # Times use POSIXct and POSIXlt classes
+
+strptime()
+as.Date()
+as.POSIXct()
+as.POSIXlt()
+
+
 
 
