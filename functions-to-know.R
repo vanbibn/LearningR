@@ -161,5 +161,16 @@ as.POSIXct()
 as.POSIXlt()
 
 
+## Logicals ===================================================================
+
+identical()
+isTRUE()
+xor()  # exclusive OR (T | T --> FALSE)
+which()
+any()
+all()
+
+
+
 
 
