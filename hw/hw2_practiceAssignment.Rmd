@@ -15,6 +15,12 @@ This guided example, will **not** provide a solution for programming assignment 
 To begin, download this file and unzip it into your R working directory.  
 http://s3.amazonaws.com/practice_assignment/diet_data.zip
 
+Actually check working directory before downloading and unzipping data.
+```{r}
+getwd()
+```
+
+
 You can do  this in R with the following code:
 ```{r}
 dataset_url <- "http://s3.amazonaws.com/practice_assignment/diet_data.zip"
@@ -28,13 +34,13 @@ If you're not sure where your working directory is, you can find out with the `g
 So assuming you've unzipped the file into your R directory, you should have a folder called diet_data.  In that folder there are five files.  Let's get a list of those files:
 
 ```{r}
-list.files("diet_data")
+list.files("hw/diet_data")
 ```
 
 Okay, so we have 5 files.  Let's take a look at one to see what's inside:
 
 ```{r}
-andy <- read.csv("diet_data/Andy.csv")
+andy <- read.csv("hw/diet_data/Andy.csv")
 head(andy)
 ```
 
@@ -104,7 +110,7 @@ Let's look back to the `list.files()` command.  It returns the contents of a dir
 
 Let's take the output of `list.files()` and store it:
 ```{r}
-files <- list.files("diet_data")
+files <- list.files("hw/diet_data")
 files
 ```
 
@@ -125,7 +131,7 @@ Woah, what happened?  Well, John.csv is sitting inside the diet_data folder.  We
 One approach would be to use `paste()` or `sprintf()`.  However, if you go back to the help file for `list.files()`, you'll see that there is an argument called `full.names` that will append (technically prepend) the path to the file name for us.
 
 ```{r}
-files_full <- list.files("diet_data", full.names=TRUE)
+files_full <- list.files("hw/diet_data", full.names=TRUE)
 files_full
 ```
 
@@ -237,7 +243,7 @@ So what does the function look like?
 weightmedian <- function(directory, day)  {
         files_list <- list.files(directory, full.names=TRUE)   #creates a list of files
         dat <- data.frame()                             #creates an empty data frame
-        for (i in 1:5) {                                
+        for (i in 1:length(files_list)) {                                
                 #loops through the files, rbinding them together 
                 dat <- rbind(dat, read.csv(files_list[i]))
         }
@@ -250,9 +256,9 @@ weightmedian <- function(directory, day)  {
 You can test this function by running it a few different times:
 
 ```{r}
-weightmedian(directory = "diet_data", day = 20)
-weightmedian("diet_data", 4)
-weightmedian("diet_data", 17)
+weightmedian(directory = "hw/diet_data", day = 20)
+weightmedian("hw/diet_data", 4)
+weightmedian("hw/diet_data", 17)
 ```
 
 Hopefully, this has given you some practice applying the basic concepts from weeks 1 and 2.  If you can work your way through this example, you should have all of the tools needed to complete part 1 of assignment 1.  Parts 2 and 3 are really just expanding on the same basic concepts, potentially adding in some ideas like cbinds and if-else.
@@ -262,6 +268,8 @@ Hopefully, this has given you some practice applying the basic concepts from wee
 One last quick note:  The approach I'm showing above for building the data frame is submoptimal.  It works, but generally speaking, you don't want to build data frames or vectors by copying and re-copying them inside of a loop.  If you've got a lot of data it can become very, very slow.  However, this tutorial is meant to provide an introduction to these concepts, and you can use this approach successfully for programming assignments 1 and 3.
 
 If you're interested in learning the better approach, check out Hadley Wickam's excellent material on functionals within R:  http://adv-r.had.co.nz/Functionals.html.   But if you're new to both programming and R, I would skip it for now as it will just confuse you.  Come back and revisit it (and the rest of this section) once you are able to write working functions using the approach above.
+
+### To be continued ... ------
 
 However, for those of you that do want to see a better way to create a dataframe....
 
