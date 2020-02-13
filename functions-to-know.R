@@ -170,7 +170,26 @@ which()
 any()
 all()
 
+## Loop Functions =============================================================
 
+lapply()
+apply()
+mapply()
+tapply()
+
+split()
+
+## Debugging ===============================================================
+
+# Questions to ask yourself when something goes wrong
+#   What was your input?
+#   How did you call the function?
+#   What were you expecting?
+#     Output messages or other results?
+#   What did you get?
+#     How does what you get differ from what you were expecting?
+#     Were your expectations correct in the first place?
+#   Can you reproduce the problem (exactly)?
 
 
 
