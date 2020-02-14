@@ -71,16 +71,29 @@ rbind(x4,y4)
 
 
 ### Reading tabular data  -----------------------------------------------------
-Read this help page --Memorize!- optimize how read large datasets
+Read the help page for `read.table`. 
+**Memorize!** - allows you to optimize how to read large datasets
 
 ```{r}
 ?read.table
 ```
  
-Eg. optimize: comment.char, nrows, colClasses
-- how much memory needed to read in = (#row * #col * 8bytes)/(2^30 bytes/GB)  
-    + double to account for overhead in reading data in  
-- Know your: OS, memory size, 64/32bit, other apps open or users logged in)  
+Eg. optimize: 
+    * comment.char: set to empty string "" if no comments in file  
+    * nrows: for large files pre-set to slightly larger number than needed  
+    * colClasses: specifying instead of using default can make 2x faster!  
+        + Must know the class of each column (see example below)
+        
+```{r}
+initial <- read.table("datatable.txt", nrows = 100)
+classes <- sapply(initial, class)
+tabAll <- read.table("datatable.txt", colClasses = classes)
+```
+        
+How much memory needed to read in data? Make sure less than RAM available!
+$ RAM = 2 * ((#row * #col * 8bytes)/(2^30 bytes/GB))$
+    (double to account for overhead in reading data in)
+Know your: OS, memory size, 64/32bit, other apps open or users logged in  
 
 ## Workspace and Files =======================================================
 
