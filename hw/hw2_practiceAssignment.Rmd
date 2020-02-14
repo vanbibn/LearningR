@@ -34,13 +34,13 @@ If you're not sure where your working directory is, you can find out with the `g
 So assuming you've unzipped the file into your R directory, you should have a folder called diet_data.  In that folder there are five files.  Let's get a list of those files:
 
 ```{r}
-list.files("hw/diet_data")
+list.files("diet_data")
 ```
 
 Okay, so we have 5 files.  Let's take a look at one to see what's inside:
 
 ```{r}
-andy <- read.csv("hw/diet_data/Andy.csv")
+andy <- read.csv("diet_data/Andy.csv")
 head(andy)
 ```
 
@@ -110,7 +110,7 @@ Let's look back to the `list.files()` command.  It returns the contents of a dir
 
 Let's take the output of `list.files()` and store it:
 ```{r}
-files <- list.files("hw/diet_data")
+files <- list.files("diet_data")
 files
 ```
 
@@ -131,7 +131,7 @@ Woah, what happened?  Well, John.csv is sitting inside the diet_data folder.  We
 One approach would be to use `paste()` or `sprintf()`.  However, if you go back to the help file for `list.files()`, you'll see that there is an argument called `full.names` that will append (technically prepend) the path to the file name for us.
 
 ```{r}
-files_full <- list.files("hw/diet_data", full.names=TRUE)
+files_full <- list.files("diet_data", full.names=TRUE)
 files_full
 ```
 
@@ -256,9 +256,9 @@ weightmedian <- function(directory, day)  {
 You can test this function by running it a few different times:
 
 ```{r}
-weightmedian(directory = "hw/diet_data", day = 20)
-weightmedian("hw/diet_data", 4)
-weightmedian("hw/diet_data", 17)
+weightmedian(directory = "diet_data", day = 20)
+weightmedian("diet_data", 4)
+weightmedian("diet_data", 17)
 ```
 
 Hopefully, this has given you some practice applying the basic concepts from weeks 1 and 2.  If you can work your way through this example, you should have all of the tools needed to complete part 1 of assignment 1.  Parts 2 and 3 are really just expanding on the same basic concepts, potentially adding in some ideas like cbinds and if-else.
