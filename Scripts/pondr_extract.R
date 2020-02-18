@@ -3,7 +3,7 @@ library(readr)
 getwd()
 list.files('Data')
 
-pondr <- readLines("Data/pondrtest.txt")
+pondr <- readLines("Data/Q3BBV0_3.txt")
 
 # remove disorder segment lines
 dis_seg <- grepl("Predicted disorder segment", pondr)
@@ -36,3 +36,8 @@ row.names(myresult) <- c(
 )
 
 myresult
+
+df_result <- as.data.frame(t(myresult))
+df_result
+
+write.csv(df_result, file = "Output/Q3BBV0_pondr.csv")
