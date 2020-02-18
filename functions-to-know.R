@@ -107,6 +107,11 @@ my_data <- sample(c(y,z), 100)
 my_na <- is.na(my_data)
 sum(my_na) # counts num of TRUE's ie. # NA values
 
+any(is.na(my_data))  
+
+# to quickly replace null values with average value of col
+mtcars$mpg[is.na(mtcars$mpg)] <- mean(mtcars$mpg) # but no na in mtcars dataset
+
 # use subsetting to remove missing values from my_data
 my_data[!my_na]
 
@@ -149,7 +154,8 @@ cnames <- c("patient", "age", "weight", "bp", "rating", "test")
 colnames(my_data) <- cnames
 
 good <- complete.cases()
-
+subset()
+order()
 
 ## Dates and Times  ===========================================================
  # dates use the Date class
