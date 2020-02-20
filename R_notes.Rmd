@@ -175,6 +175,11 @@ my_data <- sample(c(y,z), 100)
 my_na <- is.na(my_data)
 sum(my_na) # counts num of TRUE's ie. # NA values
 
+any(is.na(my_data))  
+
+# to quickly replace null values with average value of col
+mtcars$mpg[is.na(mtcars$mpg)] <- mean(mtcars$mpg) # but no na in mtcars dataset
+
 # use subsetting to remove missing values from my_data
 my_data[!my_na]
 ```
@@ -227,6 +232,10 @@ cnames <- c("patient", "age", "weight", "bp", "rating", "test")
 colnames(my_data) <- cnames
 
 good <- complete.cases()
+subset()
+order()
+
+str() # alternative to summary() - compact and good for lists
 ```
 
 
@@ -291,5 +300,28 @@ trace()     # insert debugging code into fn w/o editing fn itself
 
 print()
 cat()
+```
+
+## str() - The most important fn in all of R =================================
+Stands for 'structure' and will display the internal structure of any R object. Particularly well suited for displaying large lists (that may contain other lists). - Goal is to answer "What is this object?"
+
+```{r}
+str(lm)
+str(ls)
+
+library(datasets)
+str(airquality)
+```
+
+### Simulations ---------------------------------------------------------------
+When generating random numbers, setting the random number seed endures reproducibility (computer generated numbers appear random but really are not).
+
+```{r}
+set.seed(5) # pick any number you want
+rnorm(10)
+
+# to reproduce the same numbers later just reset the seed
+set.seed(5) # use same number as before
+rnorm(10)
 ```
 
