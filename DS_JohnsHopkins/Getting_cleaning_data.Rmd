@@ -1,0 +1,69 @@
+---
+title: "Getting and Cleaning Data"
+author: "Nathan W. Van Bibber"
+date: "2/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Week 1
+
+## Tidy Data
+1. Variables should be in columns (one per variable)  
+2. Observations should be in rows (again one per observation)  
+3. Have one table for each "kind" of variables <I'm not sure what this means>  
+4. Multiple tables should be likned with an "id" column  
+
+Other tips include:
+* variable names should be included in top row of each file  
+    + Make variable names human readable (error on side of being more explicit/ more verbose)  
+* Save data in one file per table  
+    + i.e. don't have multiple spreadsheet "tabs" within Excel file  
+    
+### The code book
+A word/text/markdown file that gives more information about variables including:
+1. Variables (including the units)  
+2. Summary choices made (i.e. mean or median)  
+3. Study design  
+    + through description of how data were collected  
+    
+### Instruction list
+A commputer script (with no parameters) where the input is raw data and output is tidy data.  Should be an exact recipe that will allow the data set to be reproduced if the same raw data were put back in. 
+    + be as explicit as possible for parts that cannot be included in script  
+    + include other software version numbers, specific parameters used, etc  
+    
+
+## Downloading files
+
+```{r}
+getwd()
+setwd("./data")
+setwd("../") # set wd to one level up
+
+# check for a "data" directory and create it if it does not exist
+if (!file.exists("data")) {
+    dir.create("data")
+}
+
+download.file()
+```
+
+To download a file from online:
+1. copy the link address to the file
+2. big files may take a while to download
+3. Include the date you originally downloaded the file
+4. On Mac, for *https* url need to set `method = "curl"`
+
+```{r}
+fileUrl <- "https://example..."
+download.file(fileUrl, destfile = "./data/filename.csv", method = "curl")
+list.files("./data")
+
+#be sure to include the date you downloaded the file
+dataDownloaded <- date()
+dataDownloaded
+```
+
