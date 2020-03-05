@@ -325,3 +325,62 @@ set.seed(5) # use same number as before
 rnorm(10)
 ```
 
+
+### R Profiler ----------------------------------------------------------------
+
+Profiling is a systematic way to examine how much time is spent in different parts of a program. Useful when trying to optimize code (say when running program 1000s of times).
+
+Design code first, then optimize! 
+
+Profiling is a way to collect data for a performance analysis.
+
+#### system.time()
+`system.time()`
+* Computes the time, in seconds, needed to execute an expression  
+    + or time until error occured  
+
+##### User time vs. Elapsed time
+**user time** - time charged to the CPU's for the expression
+**elapsed time** - "wall clock" time (ie. time you experience)
+
+* usually both are relatively equal  
+* User time < elapsed time --> CPU spends a lot of time waiting  
+* Elapsed time < user time --> multiple cores/processors (parallel processing)  
+    + **parallel** package  
+    + Multi-threaded BLAS libraries  
+* time longer expressions by wrapping the whole thing in curley braces{}
+```{r}
+# Elapsed time > user time
+system.time(readLines("http://www.jhsph.edu"))
+#CPU spends most of the time waiting for the connection to open
+
+system.time({
+    n <- 1000
+    r <- numeric(n)
+    for (i in 1:n) {
+        x <- rnorm(n)
+        r[i] <- mean(x)
+    }
+})
+```
+
+#### Rprof()
+`Rprof()` starts the R profiler - keeps track of the function call stack at regularly sampled intervals and tabulates time spent in each function  
+* default interval is 0.02 sec  
+* if function runs faster than that it won't be in the call stack  
+
+Notes: 
+1. R must be compiled with profiler support (but this is usually the case).  
+2. Don't use system.time() and Rprof() together - either one or the other  
+3. Break your code into functions to get info on where most time is spent  
+4. C or Fortran code is not profiled   
+
+`summaryRprof()` summarizes the output form Rproof() in a more readable format  
+* Two methods for normalizing data  
+    + `by.total` divides the time spent in each function by the total run time
+    + `by.self` does the same, but first subtracts out time spent in functions above in the call stack  (most of the computation usually done in lower level functions that the top level function calls)  
+        - this is probably the more useful  
+
+
+
+
