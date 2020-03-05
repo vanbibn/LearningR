@@ -14,13 +14,13 @@ colnames(fit1) <- c("position", "residue", "score", "error")
 write.csv(fit1, file = "Output/test_pondrFIT.csv")
 
 # new function to calculate mean and % disorder scores
-pfit <- function(directory, ...) {
+# pfit <- function(directory, ...) {
     # create an empty data frame with 3 named columns 
     fit_df <- data.frame(matrix(ncol = 3, nrow = 0))
     colnames(fit_df) <- c("uniprotID","meanDisorder","percentDisorder")
     
     #begin for loop here
-    for (file in folder) {
+    # for (file in folder) {
         # open csv file
         df <- read.csv("Output/test_pondrFIT.csv")
         
