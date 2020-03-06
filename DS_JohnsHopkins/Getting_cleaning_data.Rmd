@@ -40,15 +40,13 @@ A commputer script (with no parameters) where the input is raw data and output i
 
 ```{r}
 getwd()
-setwd("./data")
-setwd("../") # set wd to one level up
+# setwd("./data")
+# setwd("../") # set wd to one level up
 
 # check for a "data" directory and create it if it does not exist
 if (!file.exists("data")) {
     dir.create("data")
 }
-
-download.file()
 ```
 
 To download a file from online:
@@ -59,11 +57,291 @@ To download a file from online:
 
 ```{r}
 fileUrl <- "https://example..."
-download.file(fileUrl, destfile = "./data/filename.csv", method = "curl")
+download.file(fileUrl, destfile = "./data/<filename.csv>")
 list.files("./data")
 
 #be sure to include the date you downloaded the file
 dataDownloaded <- date()
 dataDownloaded
 ```
+
+
+## Reading local flat files 
+
+`read.table()` is the most common
+- most robust  
+- allows for most flexibility  
+- reads data into RAM (be mindful of data size!)  
+    + not best way to read large data sets into R  
+- Also can be slow and requires more parameters  
+    + *file, header, sep, row.names, nrows*  
+    + *na.strings, skip, quote = ""* (can resolve problems with "s in data)  
+
+```{r}
+?read.table
+```
+
+
+## Reading Excel files
+
+```{r}
+#library(xlsx)
+cameraData <- read.xlsx("<filePATH>", sheetIndex = 1, header = TRUE)
+head(cameraData)
+
+write.xlsx
+```
+
+Note: `xlsx` and `XLConnect` have a JAVA dependency that is hard to deal with.
+
+Packages without java dependency: `readxl`, `writexl`, `openxlsx`, & `tidyxl`
+
+
+## Reading XML
+XML = E**x**tessible **M**arkup **L**anguage
+- used to store structured data  
+- basis of most web scraping  
+    + Tags correspond to general labels: start, end
+    + Attrributes are components of the label
+
+```{r}
+# Note: RCurl::getURL() needed to parse https docs
+library(RCurl)
+library(XML)
+fileUrl <- "https://www.w3schools.com/xml/simple.xml"
+curlURL <- getURL(fileUrl)
+
+doc <- htmlTreeParse(curlURL, useInternalNodes = TRUE)
+rootNode <- xmlRoot(doc)
+
+xmlName(rootNode)
+xmlName(rootNode[[1]][[1]])
+
+names(rootNode)
+names(rootNode[[1]][[1]])
+
+rootNode[[1]][[1]][[1]]
+rootNode[[1]][[1]][[1]][[1]]
+
+# gets all <name> nodes within rootNode, sends them to function xmlValue
+menuItems <- xpathSApply(rootNode, "//name", xmlValue)
+
+prices <- xpathSApply(rootNode, "//price", xmlValue)
+```
+
+XPath is another language used to access a specific component of the XML doc  
+- `/node`: Top level node
+- `//node`: Node at any level, 
+    + e.g., `//name` finds all <name> nodes, no matter where in the document
+- `node[@attr-name]`: Node with an attribute name, 
+    + e.g., `name[@length]` returns <name> nodes that have an attribute *length*
+- `node[@att-name='bob']`: Node with an attriubte with a given value, 
+    + e.g., `name[@length='7']` returns <name> nodes with attribute length=“7”
+
+```{r}
+# this is working as of March 5, 2020!!
+fileUrl_2 <- "https://www.espn.com/nfl/team/_/name/bal/baltimore-ravens"
+curlURL_2 <- getURL(fileUrl_2)
+doc2 <- htmlTreeParse(curlURL_2, useInternalNodes = TRUE)
+scores <- xpathSApply(doc, "//div[@class='score']",xmlValue)
+teams <- xpathSApply(doc, "//div[@class='game-info']",xmlValue)
+scores
+teams
+```
+
+## Reading JSON
+JSON = Javascript Object Notation  
+- common for APIs  
+- similar to XML but different syntax/format  
+
+```{r}
+library(jsonlite)
+jsonData <- fromJSON("https://api.github.com/users/vanbibn/repos")
+names(jsonData)
+names(jsonData$owner)
+jsonData$owner$login
+
+# Writing data to JSON
+myjson <- toJSON(iris, pretty = TRUE)
+cat(myjson)
+```
+
+
+## data.table package
+`data.table` is similar to dataframes but faster and more memmory efficient
+- inherits from `data.table`  
+    + all functions that accept `data.frame` work on `data.table`  
+- written in C so its much faster  
+    + subsetting, group, and updating  
+    
+```{r}
+library(data.table)
+?data.table
+DF <- data.frame(x=rnorm(9), y=rep(c("a","b","c"), each=3), z=rnorm(9))
+head(DF,3)
+
+DT <- data.table(x=rnorm(9), y=rep(c("a","b","c"), each=3), z=rnorm(9))
+head(DT,3)
+
+tables()
+DT[2,]
+DT[DT$y=="a"]
+
+```
+    
+Subsetting with only 1 index will subset based on rows  
+
+```{r}
+# subsetting with only 1 index subsets based on rows
+DT[c(3,4)]  #rows 3 and 4
+
+# subsetting columns different!
+DT[,c(2,3)] #columns 2 and 3
+DT[,list(mean(x),sum(z))]  #returns mean of col x and sum of col z
+DT[,table(y)]
+
+```
+
+Add new columns quickly and efficiently  
+- does not copy to a new data frame, just adds new column  
+    + use `copy()` to explicitly create a copy of the data frame if you want to mutate one copy without affecting the other!  
+- can preform multi-step functions to create new variables  
+    + group functions with "{}"  
+    + separate functions with ";"  
+- plyr-like operations  
+
+```{r}
+DT[,w:=z^2]  # new col w = z value squared
+DT2 <- copy(DT)  # makes a new copy of the DT
+DT3 <- DT2       # does not make a new copy of the DT
+DT2[, y:= 2]     # changes DT2 and DT3!
+head(DT,3)
+head(DT2,3)
+head(DT3,3)
+
+# multi-step functions to create a new variable
+DT[, m:= {tmp <- (x + z); log2(tmp + 5)}]
+
+# plyr-like operations
+DT[, a:= x>0] # a is column of T and F values
+DT[, b:= mean(x+w), by=a] 
+    # takes mean when a=T (1.310) and assigns to col b everywhere a=T
+    # takes mean when a=F (-0.446) and assigns to col b everywhere a=F
+```
+
+Special variables:  
+- `.N` =  number of times a particular group appears  
+- Keys allow to subset and sort DT faster than can do with a data frame  
+    + facilitate Joins between data tables  
+- `fread()` reads tables in faster than `read.table()`  
+
+
+
+# Week 2
+
+## Reading from mySQL
+
+1. Install mySQL on your computer (http://dev.mysql.com/doc/refman/5.7/en/installing.html)
+2. `install.packages("RMySQL")`
+
+https://cran.r-project.org/web/packages/RMySQL/RMySQL.pdf
+
+**Dont forget to close the connection**
+
+## Reading from HDF5
+
+
+## Reading from the Web
+
+**Web scraping** = programatically extraction data from the HTML code of websites
+
+### Getting Data with `readLines()`
+
+```{r}
+con = url("https://scholar.google.com/citations?user=HI-I6C0AAAAJ&hl=en")
+htmlCode <- readLines(con)
+close(con)
+substr(htmlCode, start = 1, stop = 1000)
+
+class(htmlCode)   # character vector
+length(htmlCode)  # num of elements in the vector
+nchar(htmlCode)   # num characters in each element of the vector
+```
+
+### Parsing with XML
+more convenient than using readLines()
+- helps to know **XPath**  
+
+```{r}
+library(RCurl)
+library(XML)
+url <- "https://scholar.google.com/citations?user=HI-I6C0AAAAJ&hl=en"
+curl_data <- getURL(url)
+html <- htmlTreeParse(curl_data, useInternalNodes = TRUE)
+
+xpathSApply(html, "//title", xmlValue)
+xpathSApply(html, "//a[@class='gsc_a_ac gs_ibl']", xmlValue)
+```
+
+Or using `GET` from the `httr` pagkage
+
+```{r}
+library(httr)
+html2 <- GET(url)
+content2 <- content(html2, as = "text")
+parsedHtml <- htmlParse(content2, asText = TRUE)
+xpathSApply(parsedHtml, "//title", xmlValue)
+```
+
+### Using handles
+A handle is a way of caching a URL and login, along with information such as cookies. So it represents a web session. This is important if you need to access the URL again without re-authenticating, or having the cookies overwritten. A handle will apply to everything on a site that is defined as being within a single web session. That generally (but not always) means all subpaths below the path you pass to the handle, and generally (but not always) excludes anything outside of that path, and its children.
+
+Note that, as far as I can tell, authentication does not happen with the handle function. You first define a handle, and then use GET to authenticate, using the handle. But because the handle can retain cookies, subsequent use of that handle will not require re-authentication.
+
+
+## Reading from APIs 
+API = Application Programming Interfaces
+
+### Creating an application
+First, create an account. This usually means a developer account, beyond or in addition to a user account. Then you create an application.
+
+My notes on creating an application:
+- The Name must be unique across all Twitter users (ie.“Test” won't work)
+- The description must be at least 10 characters.
+- After your app is created, click the “API Keys” tab", and click on the “Create token access” button. It may take a little while, but eventually this page will show “Access token” and “Access token secret” fields.
+
+After account is created:
+- The four values you want are under the “API Keys” tab of your application.
+- The video's “consumer key” is “Access token”
+- The video's “consumer secret” is “Access token secret”
+
+## Reading from Other sources
+
+Best way to find out if the R package exists is to Google it!
+    + “<data storage mechanim> R package” (e.g., “MySQL R package”)
+    
+Interacting more directly with files:
+- file: open a connection to a text file
+- url: open a connection to a url
+- gzfile: open a connection to a .gz file
+- bzfile: open a connection to a .bz2 file
+- read.fwf hint-hint-wink-wink: Reads from a fixed-width file
+- ?connections for more information
+
+**Remember to close connections**
+
+Foreign packages: loads data from Minitab, S, SAS, SPSS, Stata, Systat
+- read.arff (Weka)
+- read.dta (Stata)
+- read.mtp (Minitab)
+- read.octave (Octave)
+- read.spss (SPSS)
+- read.xport (SAS)
+
+See the help page for more details: http://cran.r-project.org/web/packages/foreign/foreign.pdf
+
+
+# Week 3
+
+## Subsetting and sorting
 
