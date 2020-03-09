@@ -14,5 +14,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Concepts and Ideas  
 It is difficult to reproduce entire studies, but can't do nothing.
 Reproducibility bridges this gap.  
-- validation of data analysis  
-    + complex statistical methods subjected to intense scrutiny  
+
+* validation of data analysis  
+  + complex statistical methods subjected to intense scrutiny  
