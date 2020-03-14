@@ -238,6 +238,37 @@ order()
 str() # alternative to summary() - compact and good for lists
 ```
 
+## Scoping Rules ==============================================================
+
+R uses lexical scoping for free variables
+* the values of free variables are searched for in the environment in which the function was *defined*.
+    + Typically, a function is defined in the global environment so that the values of free variables are found in the user's workspace
+* However, R can have functions defined *inside* other functions!
+
+```{r}
+# this function returns another function as its value!
+make.power <- function(n) {
+    pow <- function(x) {
+        x^n
+    }
+    pow
+}
+
+# make.power() has the ability to creat many other functions
+# here we'll make functions to cube and square a given number
+cube <- make.power(3)
+square <- make.power(2)
+cube(4)
+square(4)
+
+# look at the environment in which the function was defined
+ls(environment(cube))
+get("n", environment(cube)) # n = 3
+
+ls(environment(square))
+get("n", environment(square)) # n = 2
+```
+
 
 ## Dates and Times  ===========================================================
 Dates use the Date class
@@ -264,14 +295,74 @@ all()
 
 
 ## Loop Functions =============================================================
+Loop functions are some of the most powerful functions in the R language. Execute a loops over a set of objects in an easy, compact way.
+`lapply()`  loop over a list and evaluate a function on each element
+    + always returns a list regardless of the class of the input
+`sapply()`  same as lapply but tries to simplify the result as a vector or martix
+`apply()`   apply a function over the margin of an array
+    + `rowSums`, `rowMeans`, `colSums`, `colMeans` optimized shortcut functions
+`tapply()`  apply a function over a vector grouping by subsets or factors
+`mapply()`  multivariate version of lapply
+    + apply a function with multiple sets of argumets from different lists
+
+`split()`   splits objects into sub-pieces - useful to use with lapply
+
 
 ```{r}
-lapply()
-apply()
-mapply()
-tapply()
+lapply
+x <- list(a = 1:5, b = c(7,10,13))
+lapply(x, mean)
+```
 
-split()
+These functions make heavy use of *anonymous* functions (functions that generated on the fly and don't have names)
+
+```{r}
+x <- list(a = matrix(paste("a", 1:4, sep = ""), 2, 2), b = matrix(paste("b", 1:6, sep = ""), 3, 2))
+x
+
+# anonymous function to extract the first column of each matrix
+# function only exists within the context of lapply then goes away
+lapply(x, function(elt) elt[,1])
+```
+
+`sapply` will simplify the result into a vestor or matrix if possible
+```{r}
+x <- list(a = 1:4, b = rnorm(10), c = rnorm(20, 1), d = rnorm(100, 5))
+l <- lapply(x, mean)
+v <- sapply(x, mean)
+l
+v
+class(l)
+class(v)
+is.vector(v)
+```
+
+Use `mapply` to calculate the mean of Ozone, Solar R., Wind, and Temp for each month
+```{r}
+library(datasets)
+head(airquality)
+
+# split the airquality data by month (note: only May-Sept in dataset)
+s <- split(airquality, airquality$Month)
+
+# apply the mean function to each of the months
+lapply(s, function(x) colMeans(x[, c("Ozone", "Solar.R", "Wind", "Temp")], na.rm = TRUE))
+
+sapply(s, function(x) colMeans(x[, c("Ozone", "Solar.R", "Wind", "Temp")], na.rm = TRUE))
+```
+
+
+Splitting over more than one level
+```{r}
+x <- rnorm(10)
+f1 <- gl(2, 5) #, labels = c("male", "female"))
+f2 <- gl(5, 2) #, labels = c("red","green","blue","white","black"))
+f1
+f2
+interaction(f1, f2)
+
+# split will automatically call the interaction function btw 2 elements of list
+str(split(x, list(f1, f2), drop = TRUE))
 ```
 
 
@@ -380,7 +471,3 @@ Notes:
     + `by.total` divides the time spent in each function by the total run time
     + `by.self` does the same, but first subtracts out time spent in functions above in the call stack  (most of the computation usually done in lower level functions that the top level function calls)  
         - this is probably the more useful  
-
-
-
-
