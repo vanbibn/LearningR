@@ -1,0 +1,44 @@
+---
+title: "Exploratory Data Analysis"
+author: "Nathan W. Van Bibber"
+date: "3/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Week 1 ======================================================================
+
+##
+
+## Graphics Devices
+
+Two ways to create a plot:
+1. Call a plotting function, and the plot appears on the screen
+    + Annotate the plot if necessary
+2. For sending a plot to a file device (plot will not actually appear on screen):
+    A. Explicitly launch graphics device
+    B. Call a plotting function to make a plot (copy paste from script)
+    C. Annotate if necessary
+    D. **Important!** Explicitly *close* graphics device with `dev.off()` 
+
+```{r}
+library(datasets)
+with(faithful, plot(eruptions, waiting)) ## make plot appear on the screen
+title(main = "Old Faithful Geyser data")  ## Annotate with a title
+```
+
+
+Two basic types of file
+Vector
+* pdf
+* svg
+* win.meta
+
+Bitmap
+* png
+* jpeg
+* tiff
+* bmp
