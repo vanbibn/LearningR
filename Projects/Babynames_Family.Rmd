@@ -1,0 +1,157 @@
+---
+title: "Babynames_Family"
+author: "Nathan W. Van Bibber"
+date: "5/6/2020"
+output: html_document
+---
+
+# Family Baby Names
+
+First let's load some packages. 
+
+```{r, results='hide'}
+library(babynames)
+library(dplyr)
+library(ggplot2)
+```
+
+Now, let's take a glimpse at the babynames package.  For more on the `glimpse()` function type `?tibble::glimpse` since dplyr imports the function from the tibble package.
+```{r}
+glimpse(babynames)
+
+unique(babynames$year)
+```
+
+## Making some plots
+
+Now, I'll make a data frame for each of our names and plot them individually.
+
+```{r}
+babynames_lily <- babynames %>% 
+    filter(name == "Lily") %>% 
+    group_by(name, year) %>% 
+    summarise(n_total = sum(n))
+
+babynames_nathan <- babynames %>% 
+    filter(name == "Nathan") %>% 
+    group_by(name, year) %>% 
+    summarise(n_total = sum(n))
+
+babynames_cassie <- babynames %>% 
+    filter(name == "Cassie") %>% 
+    group_by(name, year) %>% 
+    summarise(n_total = sum(n))
+
+ggplot(babynames_lily, aes(x = year, y = n_total)) +
+    geom_line() + 
+    ggtitle("Popularity of the name Lily over time")
+
+ggplot(babynames_cassie, aes(x = year, y = n_total)) +
+    geom_line() + 
+    ggtitle("Popularity of the name Cassie over time")
+
+ggplot(babynames_nathan, aes(x = year, y = n_total)) +
+    geom_line() + 
+    ggtitle("Popularity of the name Nathan over time")
+```
+
+
+## Groupings
+
+Now I'll put all of us on the same plot.
+
+```{r}
+babynames_family <- babynames %>% 
+    filter(name %in% c("Cassie", "Lily", "Nathan")) %>% 
+    group_by(name, year) %>% 
+    summarise(n_total = sum(n))
+
+#babynames_family
+
+ggplot(babynames_family, aes(x = year, y = n_total, color = name)) + 
+    geom_line() + 
+    ggtitle("Popularity of our Family names over time.")
+
+```
+
+
+```{r}
+babynames_grandparents <- babynames %>% 
+    filter(name %in% c("Sharon", "Peggy", "Walter", "Connie", "Alice")) %>% 
+    group_by(name, year) %>% 
+    summarise(n_total = sum(n))
+
+
+ggplot(babynames_grandparents, aes(x = year, y = n_total, color = name)) + 
+    geom_line() + 
+    ggtitle("Popularity of names over time.")
+
+```
+
+
+Now let me compare my siblings and myself.
+
+```{r}
+babynames_siblings <- babynames %>% 
+    filter(name %in% c("Nathan", "Shelley", "Rachel")) %>% 
+    group_by(name, year) %>% 
+    summarise(n_total = sum(n))
+
+
+ggplot(babynames_siblings, aes(x = year, y = n_total, color = name)) + 
+    geom_line() + 
+    ggtitle("Popularity of names over time.")
+
+
+```
+
+
+## All together now.
+
+now everybody at once.
+
+```{r}
+babynames_all <- babynames %>% 
+    filter(name %in% c("Cassie", "Lily", "Nathan", "Sharon", "Peggy", "Walter", "Connie", "Alice", "Shelley", "Rachel")) %>% 
+    group_by(name, year) %>% 
+    summarise(n_total = sum(n))
+
+
+ggplot(babynames_all, aes(x = year, y = n_total, color = name)) + 
+    geom_line() + 
+    ggtitle("Popularity of names over time.")
+
+
+```
+
+
+## Most Unique
+
+```{r}
+babynames_unique <- babynames %>% 
+    filter(name %in% c("Cassie", "Shelley")) %>% 
+    group_by(name, year) %>% 
+    summarise(n_total = sum(n))
+
+
+ggplot(babynames_unique, aes(x = year, y = n_total, color = name)) + 
+    geom_line() + 
+    ggtitle("Popularity of names over time.")
+```
+
+## Other Inquireries
+
+What were the most popular male and female names in our birth years?
+
+```{r}
+## Babynames
+
+mostPopular_byYear <- babynames %>% 
+    group_by(year, sex) %>% 
+    top_n(1, n)
+
+filter(mostPopular_byYear, year %in% c(1949,1957,1986:1988,1992,2017)) %>% 
+    arrange(sex)
+ 
+```
+
