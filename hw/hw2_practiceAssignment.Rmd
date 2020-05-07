@@ -12,14 +12,17 @@ The goal of this assignment is to provide a "bridge" between the first two weeks
 
 This guided example, will **not** provide a solution for programming assignment 1.  However, it will guide you through some core concepts and give you some practical experience to hopefully make assignment 1 seems less daunting.
 
-To begin, download this file and unzip it into your R working directory.  
-http://s3.amazonaws.com/practice_assignment/diet_data.zip
 
-Actually check working directory before downloading and unzipping data.
+
+First, check your working directory before downloading and unzipping data.
+
+If you're not sure where your working directory is, you can find out with the `getwd()` command.  Alternatively, you can view/change it through the Tools > Global Options menu in R Studio.
 ```{r}
 getwd()
 ```
 
+To begin, download this file and unzip it into your R working directory.  
+http://s3.amazonaws.com/practice_assignment/diet_data.zip
 
 You can do  this in R with the following code:
 ```{r}
@@ -27,9 +30,6 @@ dataset_url <- "http://s3.amazonaws.com/practice_assignment/diet_data.zip"
 download.file(dataset_url, "diet_data.zip")
 unzip("diet_data.zip", exdir = "diet_data")
 ```
-
-
-If you're not sure where your working directory is, you can find out with the `getwd()` command.  Alternatively, you can view/change it through the Tools > Global Options menu in R Studio.
 
 So assuming you've unzipped the file into your R directory, you should have a folder called diet_data.  In that folder there are five files.  Let's get a list of those files:
 
@@ -78,7 +78,7 @@ andy[30, "Weight"]
 ```
 
 Alternatively, you could create a subset of the 'Weight' column where the data where 'Day' is equal to 30.
-```{r}
+```{r, results='hold'}
 andy[which(andy$Day == 30), "Weight"]
 andy[which(andy[,"Day"] == 30), "Weight"]
 ```
