@@ -183,6 +183,8 @@ apply()
 mapply()
 tapply()
 
+do.call() # specify a function & a list (each elmt. of list is argument to the fn)
+
 split()
 
 ## Debugging ===============================================================
