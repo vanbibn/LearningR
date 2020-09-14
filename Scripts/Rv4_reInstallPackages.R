@@ -16,4 +16,6 @@ install.packages("lattice")
 install.packages("latticeExtra")
 install.packages("jpeg")
 install.packages("devtools")
-
+install.packages("janitor")
+install.packages("statsr")
+install.packages("reticulate")
